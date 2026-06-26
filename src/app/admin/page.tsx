@@ -35,7 +35,7 @@ export default async function AdminPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">Guests</h1>
           <p className="text-muted-foreground mt-1">
@@ -115,14 +115,20 @@ export default async function AdminPage() {
       </div>
 
       {/* Guest Table */}
-      <div className="">
+      <div className="space-y-4">
         {/* Link to the /guests page */}
-        <Button asChild variant="ghost" size="sm" className="justify-end">
-          <Link href="/admin/guests">
-            <Users className="h-4 w-4 mr-1" />
-            View All Guests
-          </Link>
-        </Button>
+        <div className="flex justify-between items-center gap-2">
+          <span className="text-xs text-muted-foreground">
+            Total guests in this view: {allGuests.length}
+          </span>
+          <Button asChild variant="ghost" size="sm" className="justify-end">
+            <Link href="/admin/guests">
+              <Users className="h-4 w-4 mr-1" />
+              View All Guests
+            </Link>
+          </Button>
+          {/* Total guests in this view */}
+        </div>
         <GuestTable allGuests={allGuests} />
       </div>
     </div>

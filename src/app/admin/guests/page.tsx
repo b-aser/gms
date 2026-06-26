@@ -25,6 +25,11 @@ export default async function GuestsPage() {
         </Button>
         <h1 className="text-2xl font-bold">All Guests</h1>
       </div>
+      <div className="">
+        <span className="text-xs text-muted-foreground">
+          Total guests {allGuests.length}
+        </span>
+      </div>
       <GuestTable allGuests={allGuests} />
     </div>
   );
