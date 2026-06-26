@@ -7,7 +7,7 @@ import { db } from "@/db";
 import { guests, users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { format } from "date-fns";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Pencil } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -45,7 +45,7 @@ export default async function GuestDetailPage({
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 flex-wrap">
         <Button asChild variant="ghost" size="sm">
           <Link href="/admin">
             <ArrowLeft className="h-4 w-4 mr-1" />
@@ -60,6 +60,12 @@ export default async function GuestDetailPage({
         ) : (
           <Badge variant="outline">Pending</Badge>
         )}
+        <Button asChild variant="outline" size="sm" className="ml-auto">
+          <Link href={`/admin/guests/${guest.id}/edit`}>
+            <Pencil className="h-4 w-4 mr-2" />
+            Edit Guest
+          </Link>
+        </Button>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">

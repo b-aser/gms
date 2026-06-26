@@ -16,6 +16,7 @@ export function QRDisplay({ code, name }: { code: string; name: string }) {
             dark: "#1A1A1A",
             light: "#F5F5F5",
         },
+        errorCorrectionLevel: "H",
     }).then(setDataUrl);
   }, [code]);
 
