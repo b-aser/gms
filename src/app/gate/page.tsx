@@ -6,6 +6,7 @@ import { ScanLine, Keyboard } from "lucide-react";
 import QRScanner from "@/components/qr-scanner";
 import ManualEntry from "@/components/manual-entry";
 import CheckinResult from "@/components/checkin-result";
+import RecentCheckins from "@/components/recent-checkins";
 
 type ResultStatus = "success" | "already_checked_in" | "invalid";
 
@@ -62,7 +63,7 @@ export default function GatePage() {
             How would you like to verify this guest?
           </p>
         </div>
-
+  
         <div className="grid grid-cols-2 gap-4">
           <button
             onClick={() => setMode("scan")}
@@ -74,7 +75,7 @@ export default function GatePage() {
               Use camera to scan guest QR code
             </span>
           </button>
-
+  
           <button
             onClick={() => setMode("manual")}
             className="flex flex-col items-center justify-center gap-3 p-8 rounded-xl border-2 border-dashed hover:border-primary hover:bg-primary/5 transition-colors cursor-pointer"
@@ -86,6 +87,8 @@ export default function GatePage() {
             </span>
           </button>
         </div>
+  
+        <RecentCheckins />
       </div>
     );
   }
