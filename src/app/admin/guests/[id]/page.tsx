@@ -7,7 +7,7 @@ import { db } from "@/db";
 import { guests, users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { format } from "date-fns";
-import { ArrowLeft, Pencil } from "lucide-react";
+import { ArrowLeft, Pencil, Printer } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import ResetCheckin from "@/components/reset-checkin";
@@ -61,12 +61,20 @@ export default async function GuestDetailPage({
         ) : (
           <Badge variant="outline">Pending</Badge>
         )}
-        <Button asChild variant="outline" size="sm" className="ml-auto">
-          <Link href={`/admin/guests/${guest.id}/edit`}>
-            <Pencil className="h-4 w-4 mr-2" />
-            Edit Guest
-          </Link>
-        </Button>
+        <div className="ml-auto flex items-center gap-2">
+          <Button asChild variant="outline" size="sm">
+            <Link href={`/admin/guests/${guest.id}/print`}>
+              <Printer className="h-4 w-4 mr-2" />
+              Print Invite
+            </Link>
+          </Button>
+          <Button asChild variant="outline" size="sm">
+            <Link href={`/admin/guests/${guest.id}/edit`}>
+              <Pencil className="h-4 w-4 mr-2" />
+              Edit Guest
+            </Link>
+          </Button>
+        </div>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
@@ -128,14 +136,13 @@ export default async function GuestDetailPage({
       </div>
       {/* Actions */}
       <div className="flex items-center justify-between flex-wrap gap-3">
-            {guest.checkedIn && (
-              <ResetCheckin guestId={guest.id} guestName={guest.name} />
-            )}
+        {guest.checkedIn && (
+          <ResetCheckin guestId={guest.id} guestName={guest.name} />
+        )}
         <div className="ml-auto">
-            <GuestActions guestId={guest.id} guestName={guest.name} />
+          <GuestActions guestId={guest.id} guestName={guest.name} />
         </div>
       </div>
-      
     </div>
   );
 }
