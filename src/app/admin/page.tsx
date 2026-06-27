@@ -16,6 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { UserPlus, Users, CheckCircle, Clock } from "lucide-react";
 import ImportButton from "@/components/import-button";
 import GuestTable from "@/components/guest-table";
+import ExportButton from "@/components/export-button";
 
 export const dynamic = "force-dynamic";
 
@@ -43,6 +44,7 @@ export default async function AdminPage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
+          <ExportButton />
           <ImportButton />
           <Button asChild>
             <Link href="/admin/guests/new">

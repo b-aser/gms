@@ -10,6 +10,7 @@ import { format } from "date-fns";
 import { ArrowLeft, Pencil } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import ResetCheckin from "@/components/reset-checkin";
 
 export default async function GuestDetailPage({
   params,
@@ -126,7 +127,15 @@ export default async function GuestDetailPage({
         </div>
       </div>
       {/* Actions */}
-      <GuestActions guestId={guest.id} guestName={guest.name} />
+      <div className="flex items-center justify-between flex-wrap gap-3">
+            {guest.checkedIn && (
+              <ResetCheckin guestId={guest.id} guestName={guest.name} />
+            )}
+        <div className="ml-auto">
+            <GuestActions guestId={guest.id} guestName={guest.name} />
+        </div>
+      </div>
+      
     </div>
   );
 }
