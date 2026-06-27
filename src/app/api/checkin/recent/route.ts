@@ -1,12 +1,12 @@
 import { db } from "@/db";
 import { guests, users } from "@/db/schema";
-import { requireAdmin } from "@/lib/auth-session";
+import { requireAuth } from "@/lib/auth-session";
 import { desc, eq, isNotNull } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
 export async function GET() {
     try {
-        await requireAdmin();
+        await requireAuth();
 
         const recent = await db
         .select({

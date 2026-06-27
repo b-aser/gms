@@ -65,6 +65,7 @@ export default function RecentCheckins() {
       setUndoSuccess("");
     }, 4000);
   }
+
   const mostRecent = checkins[0];
   const canUndo = (() => {
     if (!mostRecent?.checkedInAt) return false;
@@ -118,7 +119,7 @@ export default function RecentCheckins() {
             <Clock className="h-4 w-4" />
             Recent Check-ins
           </CardTitle>
-          <span className="text-sx text-muted-foreground">
+          <span className="text-xs text-muted-foreground">
             Auto-refreshes every 10s
           </span>
         </div>
@@ -128,7 +129,6 @@ export default function RecentCheckins() {
         {/* Undo feedback */}
         {undoSuccess && (
           <p className="text-sm text-green-600 text-center font-medium">
-            {" "}
             ✓ {undoSuccess}
           </p>
         )}
@@ -138,51 +138,56 @@ export default function RecentCheckins() {
 
         {checkins.map((guest, index) => {
           const isFirst = index === 0;
-          const partyLabel = 
-          guest.partySize === 1
-          ? "Solo"
-          : guest.partySize === 2
-          ? "+1"
-          : `Family (${guest.partySize})`;
-
+          const partyLabel =
+            guest.partySize === 1
+              ? "Solo"
+              : guest.partySize === 2
+              ? "+1"
+              : `Family (${guest.partySize})`;
 
           return (
-            <div key={guest.id} className={`flex items-center justify-between gap-3 py-2 ${isFirst ? "border-b pb-3":""}`}>
-                <div className="min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                        <p className="font-medium text-sm truncate">{guest.name}</p>
-                        <Badge variant="secondary" className="text-xs shrink-0">
-                            {partyLabel}
-                        </Badge>
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                        {formatDistanceToNow(new Date(guest.checkedInAt), {
-                            addSuffix: true,
-                        })}
-                        {" · "}
-                        {format(new Date(guest.checkedInAt), "HH:mm")}
-                    </p>
+            <div
+              key={guest.id}
+              className={`flex items-center justify-between gap-3 py-2 
+                ${isFirst ? "border-b pb-3" : ""}
+              `}
+            >
+              <div className="min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <p className="font-medium text-sm truncate">{guest.name}</p>
+                  <Badge variant="secondary" className="text-xs shrink-0">
+                    {partyLabel}
+                  </Badge>
                 </div>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {formatDistanceToNow(new Date(guest.checkedInAt), {
+                    addSuffix: true,
+                  })}
+                  {" · "}
+                  {format(new Date(guest.checkedInAt), "HH:mm")}
+                </p>
+              </div>
 
-                {isFirst && canUndo && (
-                    <Button variant="outline"
-                    size="sm"
-                    onClick={handleUndo}
-                    disabled={undoing}
-                    className="shrink-0"
-                    >
-                        {undoing ? (
-                            <Loader2 className="h-3.5 w-3.5 animate-ping"/>
-                        ):(
-                            <>
-                            <Undo2 className="h-3.5 w-3.5 mr-1"/>
-                            Undo
-                            </>
-                        )}
-                    </Button>
-                )}
+              {isFirst && canUndo && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleUndo}
+                  disabled={undoing}
+                  className="shrink-0"
+                >
+                  {undoing ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <>
+                      <Undo2 className="h-3.5 w-3.5 mr-1" />
+                      Undo
+                    </>
+                  )}
+                </Button>
+              )}
             </div>
-          )
+          );
         })}
       </CardContent>
     </Card>
