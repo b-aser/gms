@@ -117,19 +117,14 @@ export default async function AdminPage() {
       {/* Guest Table */}
       <div className="space-y-4">
         {/* Link to the /guests page */}
-        <div className="flex justify-between items-center gap-2">
-          <span className="text-xs text-muted-foreground">
-            Total guests in this view: {allGuests.length}
-          </span>
-          <Button asChild variant="ghost" size="sm" className="justify-end">
-            <Link href="/admin/guests">
-              <Users className="h-4 w-4 mr-1" />
-              View All Guests
-            </Link>
-          </Button>
-          {/* Total guests in this view */}
-        </div>
-        <GuestTable allGuests={allGuests} />
+        <Button asChild variant="ghost" size="sm" className="justify-end">
+          <Link href="/admin/guests">
+            <Users className="h-4 w-4 mr-1" />
+            View All Guests
+          </Link>
+        </Button>
+        {/* Total guests in this view */}
+        <GuestTable guests={allGuests} />
       </div>
     </div>
   );

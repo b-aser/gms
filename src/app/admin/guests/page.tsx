@@ -30,7 +30,7 @@ export default async function GuestsPage() {
           Total guests {allGuests.length}
         </span>
       </div>
-      <GuestTable allGuests={allGuests} />
+      <GuestTable guests={allGuests} />
     </div>
   );
 }
