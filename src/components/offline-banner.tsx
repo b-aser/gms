@@ -1,7 +1,7 @@
 "use client";
 
-import { Wifi } from "lucide-react";
 import { useEffect, useState } from "react";
+import { WifiOff, Wifi } from "lucide-react";
 
 export default function OfflineBanner() {
   const [isOnline, setIsOnline] = useState(true);
@@ -9,7 +9,7 @@ export default function OfflineBanner() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // Avoid SSR mismatches
+    // Avoid SSR mismatch
     setMounted(true);
     setIsOnline(navigator.onLine);
 
@@ -21,7 +21,7 @@ export default function OfflineBanner() {
     function handleOnline() {
       setIsOnline(true);
       setShowRestored(true);
-      setTimeout(() => setShowRestored(false), 3000);
+      setTimeout(() => setShowRestored(false), 4000);
     }
 
     window.addEventListener("offline", handleOffline);
@@ -37,14 +37,14 @@ export default function OfflineBanner() {
 
   if (!isOnline) {
     return (
-      <div className="bg-green-600 text-white px-4 py-3">
+      <div className="bg-destructive text-destructive-foreground px-4 py-3">
         <div className="container mx-auto max-w-lg flex items-center gap-3">
-          <Wifi className="h-5 w-5 shrink-0" />
+          <WifiOff className="h-5 w-5 shrink-0" />
           <div>
-            <p className="font-semibold text-sm">You're offline</p>
+            <p className="font-semibold text-sm">You are offline</p>
             <p className="text-xs opacity-90 mt-0.5">
-              Check-ins cannot be processed until connection is restored. Do not
-              scan or enter codes until this banner disappears.
+              Check-ins cannot be processed until connection is restored.
+              Do not scan or enter codes until this banner disappears.
             </p>
           </div>
         </div>
