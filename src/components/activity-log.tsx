@@ -52,7 +52,7 @@ export default function ActivityLog({ staff }: { staff: StaffMember[] }) {
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
 
-  const [staffFilter, setStaffFilter] = useState<string>("");
+  const [staffFilter, setStaffFilter] = useState<string>("all");
   const [dateFrom, setDateFrom] = useState<string>("");
   const [dateTo, setDateTo] = useState<string>("");
 

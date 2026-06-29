@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
 
     const conditions = [];
 
-    if (staffId) {
+    if (staffId && staffId !== "all") {
       conditions.push(eq(checkinLogs.performedBy, staffId));
     }
 
