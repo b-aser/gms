@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ScanLine, Keyboard } from "lucide-react";
+import { ScanLine, Keyboard, Search } from "lucide-react";
 import QRScanner from "@/components/qr-scanner";
 import ManualEntry from "@/components/manual-entry";
 import CheckinResult from "@/components/checkin-result";
 import RecentCheckins from "@/components/recent-checkins";
+import GateSearch from "@/components/gate-search";
 
 type ResultStatus = "success" | "already_checked_in" | "invalid";
 
@@ -20,7 +21,7 @@ type CheckinResult = {
   };
 };
 
-type Mode = "choose" | "scan" | "manual";
+type Mode = "choose" | "scan" | "manual" | "search";
 
 export default function GatePage() {
   const [mode, setMode] = useState<Mode>("choose");
@@ -53,7 +54,6 @@ export default function GatePage() {
     return <CheckinResult result={result} onReset={handleReset} />;
   }
 
-  // Mode chooser
   if (mode === "choose") {
     return (
       <div className="space-y-6">
@@ -64,26 +64,37 @@ export default function GatePage() {
           </p>
         </div>
   
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-3 gap-3">
           <button
             onClick={() => setMode("scan")}
-            className="flex flex-col items-center justify-center gap-3 p-8 rounded-xl border-2 border-dashed hover:border-primary hover:bg-primary/5 transition-colors cursor-pointer"
+            className="flex flex-col items-center justify-center gap-3 p-6 rounded-xl border-2 border-dashed hover:border-primary hover:bg-primary/5 transition-colors cursor-pointer"
           >
-            <ScanLine className="h-10 w-10 text-primary" />
-            <span className="font-semibold">Scan QR</span>
+            <ScanLine className="h-8 w-8 text-primary" />
+            <span className="font-semibold text-sm">Scan QR</span>
             <span className="text-xs text-muted-foreground text-center">
-              Use camera to scan guest QR code
+              Camera scan
             </span>
           </button>
   
           <button
             onClick={() => setMode("manual")}
-            className="flex flex-col items-center justify-center gap-3 p-8 rounded-xl border-2 border-dashed hover:border-primary hover:bg-primary/5 transition-colors cursor-pointer"
+            className="flex flex-col items-center justify-center gap-3 p-6 rounded-xl border-2 border-dashed hover:border-primary hover:bg-primary/5 transition-colors cursor-pointer"
           >
-            <Keyboard className="h-10 w-10 text-primary" />
-            <span className="font-semibold">Enter Code</span>
+            <Keyboard className="h-8 w-8 text-primary" />
+            <span className="font-semibold text-sm">Enter Code</span>
             <span className="text-xs text-muted-foreground text-center">
-              Type the invite code manually
+              Type invite code
+            </span>
+          </button>
+  
+          <button
+            onClick={() => setMode("search")}
+            className="flex flex-col items-center justify-center gap-3 p-6 rounded-xl border-2 border-dashed hover:border-primary hover:bg-primary/5 transition-colors cursor-pointer"
+          >
+            <Search className="h-8 w-8 text-primary" />
+            <span className="font-semibold text-sm">Search</span>
+            <span className="text-xs text-muted-foreground text-center">
+              Find by name
             </span>
           </button>
         </div>
@@ -117,6 +128,22 @@ export default function GatePage() {
           <h2 className="text-lg font-semibold">Enter Invite Code</h2>
         </div>
         <ManualEntry onSubmit={handleCode} />
+      </div>
+    );
+  }
+
+  if (mode === "search") {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" size="sm" onClick={() => setMode("choose")}>
+            ← Back
+          </Button>
+          <h2 className="text-lg font-semibold">Search Guest</h2>
+        </div>
+        <GateSearch onCheckin={async (code) => {
+          await handleCode(code);
+        }} />
       </div>
     );
   }
