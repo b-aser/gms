@@ -16,7 +16,7 @@ export default function GateNav({ user }: { user: User }) {
   }
 
   return (
-    <header className="border-b bg-background">
+    <header className="sticky top-0 z-50 border-b bg-background">
       <div className="container mx-auto px-4 max-w-lg h-16 flex items-center justify-between">
         <div className="flex items-center gap-2 font-semibold text-lg">
           <Heart className="h-5 w-5 text-rose-500" />

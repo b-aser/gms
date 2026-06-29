@@ -1,50 +1,120 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { WifiOff, Wifi } from "lucide-react";
 
+const PROBE_INTERVAL_MS = 20_000;
+const PROBE_TIMEOUT_MS = 5_000;
+
+function subscribeOnline(callback: () => void) {
+  window.addEventListener("online", callback);
+  window.addEventListener("offline", callback);
+  return () => {
+    window.removeEventListener("online", callback);
+    window.removeEventListener("offline", callback);
+  };
+}
+
+function getOnlineSnapshot() {
+  return navigator.onLine;
+}
+
+function getServerSnapshot() {
+  return true;
+}
+
+async function probeServer(): Promise<boolean> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), PROBE_TIMEOUT_MS);
+  try {
+    await fetch("/api/checkin/recent", {
+      method: "HEAD",
+      cache: "no-store",
+      signal: controller.signal,
+    });
+    return true;
+  } catch {
+    return false;
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
 export default function OfflineBanner() {
-  const [isOnline, setIsOnline] = useState(true);
+  const browserOnline = useSyncExternalStore(
+    subscribeOnline,
+    getOnlineSnapshot,
+    getServerSnapshot
+  );
+  const [serverReachable, setServerReachable] = useState(true);
   const [showRestored, setShowRestored] = useState(false);
-  const [mounted, setMounted] = useState(false);
+  const wasOfflineRef = useRef(false);
+  const restoreTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const isOnline = browserOnline && serverReachable;
 
   useEffect(() => {
-    // Avoid SSR mismatch
-    setMounted(true);
-    setIsOnline(navigator.onLine);
+    if (!browserOnline) {
+      setServerReachable(false);
+      return;
+    }
 
-    function handleOffline() {
-      setIsOnline(false);
+    let cancelled = false;
+
+    async function check() {
+      const ok = await probeServer();
+      if (!cancelled) setServerReachable(ok);
+    }
+
+    void check();
+    const id = setInterval(() => void check(), PROBE_INTERVAL_MS);
+    return () => {
+      cancelled = true;
+      clearInterval(id);
+    };
+  }, [browserOnline]);
+
+  useEffect(() => {
+    if (!isOnline) {
+      wasOfflineRef.current = true;
       setShowRestored(false);
+      if (restoreTimeoutRef.current) {
+        clearTimeout(restoreTimeoutRef.current);
+        restoreTimeoutRef.current = null;
+      }
+      return;
     }
 
-    function handleOnline() {
-      setIsOnline(true);
+    if (wasOfflineRef.current) {
+      wasOfflineRef.current = false;
       setShowRestored(true);
-      setTimeout(() => setShowRestored(false), 4000);
+      restoreTimeoutRef.current = setTimeout(() => {
+        setShowRestored(false);
+        restoreTimeoutRef.current = null;
+      }, 4000);
     }
-
-    window.addEventListener("offline", handleOffline);
-    window.addEventListener("online", handleOnline);
 
     return () => {
-      window.removeEventListener("offline", handleOffline);
-      window.removeEventListener("online", handleOnline);
+      if (restoreTimeoutRef.current) {
+        clearTimeout(restoreTimeoutRef.current);
+        restoreTimeoutRef.current = null;
+      }
     };
-  }, []);
-
-  if (!mounted) return null;
+  }, [isOnline]);
 
   if (!isOnline) {
     return (
-      <div className="bg-destructive text-destructive-foreground px-4 py-3">
+      <div
+        role="alert"
+        className="sticky top-16 z-40 bg-destructive text-destructive-foreground px-4 py-3"
+      >
         <div className="container mx-auto max-w-lg flex items-center gap-3">
           <WifiOff className="h-5 w-5 shrink-0" />
           <div>
             <p className="font-semibold text-sm">You are offline</p>
             <p className="text-xs opacity-90 mt-0.5">
-              Check-ins cannot be processed until connection is restored.
-              Do not scan or enter codes until this banner disappears.
+              Check-ins cannot be processed until connection is restored. Do
+              not scan or enter codes until this banner disappears.
             </p>
           </div>
         </div>
@@ -54,7 +124,10 @@ export default function OfflineBanner() {
 
   if (showRestored) {
     return (
-      <div className="bg-green-600 text-white px-4 py-3">
+      <div
+        role="status"
+        className="sticky top-16 z-40 bg-green-600 text-white px-4 py-3"
+      >
         <div className="container mx-auto max-w-lg flex items-center gap-3">
           <Wifi className="h-5 w-5 shrink-0" />
           <div>
