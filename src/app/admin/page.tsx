@@ -17,6 +17,7 @@ import { UserPlus, Users, CheckCircle, Clock } from "lucide-react";
 import ImportButton from "@/components/import-button";
 import GuestTable from "@/components/guest-table";
 import ExportButton from "@/components/export-button";
+import LiveStats from "@/components/live-stats";
 
 export const dynamic = "force-dynamic";
 
@@ -26,12 +27,21 @@ export default async function AdminPage() {
     .from(guests)
     .orderBy(desc(guests.createdAt));
 
-  const totalGuests = allGuests.length;
-  const totalAttendees = allGuests.reduce((sum, g) => sum + g.partySize, 0);
-  const checkedIn = allGuests.filter((g) => g.checkedIn).length;
+  const totalInvites = allGuests.length;
+  const totalAttendees = allGuests.reduce((s, g) => s + g.partySize, 0);
+  const checkedInInvites = allGuests.filter((g) => g.checkedIn).length;
   const checkedInAttendees = allGuests
     .filter((g) => g.checkedIn)
-    .reduce((sum, g) => sum + g.partySize, 0);
+    .reduce((s, g) => s + g.partySize, 0);
+
+  const initialStats = {
+    totalInvites,
+    totalAttendees,
+    checkedInInvites,
+    checkedInAttendees,
+    pendingInvites: totalInvites - checkedInInvites,
+    pendingAttendees: totalAttendees - checkedInAttendees,
+  };
 
   return (
     <div className="space-y-8">
@@ -55,66 +65,8 @@ export default async function AdminPage() {
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Total Invites
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <Users className="h-4 w-4 text-muted-foreground" />
-              <span className="text-2xl font-bold">{totalGuests}</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Total Attendees
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <Users className="h-4 w-4 text-muted-foreground" />
-              <span className="text-2xl font-bold">{totalAttendees}</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Checked In
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <CheckCircle className="h-4 w-4 text-green-500" />
-              <span className="text-2xl font-bold">{checkedIn}</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Awaiting
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4 text-amber-500" />
-              <span className="text-2xl font-bold">
-                {checkedInAttendees}/{totalAttendees}
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      {/* Live Stats */}
+      <LiveStats initial={initialStats} />
 
       {/* Guest Table */}
       <div className="space-y-4">

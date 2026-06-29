@@ -4,6 +4,8 @@ import { requireAdmin } from "@/lib/auth-session";
 import { error } from "console";
 import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
+import { checkinLogs } from "@/db/schema";
+import { getSession } from "@/lib/auth-session";
 
 export async function POST(
   _req: NextRequest,
@@ -33,17 +35,29 @@ export async function POST(
     }
 
     const [updated] = await db
-    .update(guests)
-    .set({
+      .update(guests)
+      .set({
         checkedIn: false,
         checkedInAt: null,
         checkedInBy: null,
-    })
-    .where(eq(guests.id, id))
-    .returning();
+      })
+      .where(eq(guests.id, id))
+      .returning();
+
+    // Write activity log
+    const session = await getSession();
+    await db.insert(checkinLogs).values({
+      guestId: guest.id,
+      guestName: guest.name,
+      inviteCode: guest.inviteCode,
+      partySize: guest.partySize,
+      action: "reset",
+      performedBy: session?.user.id ?? null,
+      performedByName: session?.user.name ?? "Admin",
+    });
 
     return NextResponse.json(updated);
   } catch {
-    return NextResponse.json({error: "Unauthorized"}, {status: 401});
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 }

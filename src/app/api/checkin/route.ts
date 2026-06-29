@@ -4,6 +4,7 @@ import { guests } from "@/db/schema";
 import { requireAuth } from "@/lib/auth-session";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
+import { checkinLogs } from "@/db/schema";
 
 const checkinSchema = z.object({
   code: z.string().min(1),
@@ -30,7 +31,10 @@ export async function POST(req: NextRequest) {
       .limit(1);
 
     if (!guest) {
-      return NextResponse.json({ error: "Invalid invite code" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid invite code" },
+        { status: 400 },
+      );
     }
 
     if (guest.checkedIn) {
@@ -54,13 +58,24 @@ export async function POST(req: NextRequest) {
       .where(eq(guests.id, guest.id))
       .returning();
 
+    // Write activity log
+    await db.insert(checkinLogs).values({
+      guestId: guest.id,
+      guestName: guest.name,
+      inviteCode: guest.inviteCode,
+      partySize: guest.partySize,
+      action: "checkin",
+      performedBy: session.user.id,
+      performedByName: session.user.name,
+    });
+
     return NextResponse.json({
       status: "success",
       guest: {
-        name: guest.name,
-        partySize: guest.partySize,
+        name: updated.name,
+        partySize: updated.partySize,
         checkedInAt: updated.checkedInAt,
-        notes: guest.notes,
+        notes: updated.notes,
       },
     });
   } catch {

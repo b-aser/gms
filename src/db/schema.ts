@@ -64,3 +64,15 @@ export const guests = pgTable("guests", {
   notes: text("notes"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
+
+export const checkinLogs = pgTable("checkin_logs", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  guestId: uuid("guest_id").references(() => guests.id, { onDelete: "set null" }),
+  guestName: text("guest_name").notNull(),
+  inviteCode: text("invite_code").notNull(),
+  partySize: integer("party_size").notNull(),
+  action: text("action").notNull(), // "checkin" | "reset"
+  performedBy: text("performed_by").references(() => users.id, { onDelete: "set null" }),
+  performedByName: text("performed_by_name").notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
