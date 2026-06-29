@@ -41,10 +41,10 @@ export default function AdminNav({ user }: { user: User }) {
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
+                  "px-3 py-1.5 text-sm font-medium transition-colors",
                   pathname === link.href
                     ? "bg-muted text-foreground"
-                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/70"
                 )}
               >
                 {link.label}

@@ -3,17 +3,7 @@ import { guests } from "@/db/schema";
 import { desc } from "drizzle-orm";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { UserPlus, Users, CheckCircle, Clock } from "lucide-react";
+import { UserPlus, Users } from "lucide-react";
 import ImportButton from "@/components/import-button";
 import GuestTable from "@/components/guest-table";
 import ExportButton from "@/components/export-button";
