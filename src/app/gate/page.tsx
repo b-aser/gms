@@ -8,6 +8,7 @@ import ManualEntry from "@/components/manual-entry";
 import CheckinResult from "@/components/checkin-result";
 import RecentCheckins from "@/components/recent-checkins";
 import GateSearch from "@/components/gate-search";
+import GateSessionStats from "@/components/gate-session-stats";
 
 type ResultStatus = "success" | "already_checked_in" | "invalid";
 
@@ -98,7 +99,7 @@ export default function GatePage() {
             </span>
           </button>
         </div>
-  
+        {/* <GateSessionStats /> */}
         <RecentCheckins />
       </div>
     );

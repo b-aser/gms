@@ -4,6 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle2, XCircle, AlertCircle, Users } from "lucide-react";
 import { format } from "date-fns";
+import {
+  incrementSessionStats,
+  decrementSessionStats,
+} from "@/components/gate-session-stats";
+import { useEffect } from "react";
 
 type ResultStatus = "success" | "already_checked_in" | "invalid";
 
@@ -48,8 +53,14 @@ export default function CheckinResult({ result, onReset }: Props) {
     guest?.partySize === 1
       ? "1 person"
       : guest?.partySize === 2
-      ? "2 people (+1)"
-      : `${guest?.partySize} people (family)`;
+        ? "2 people (+1)"
+        : `${guest?.partySize} people (family)`;
+
+  useEffect(() => {
+    if (status === "success" && guest?.partySize) {
+      incrementSessionStats(guest.partySize);
+    }
+  }, [status, guest?.partySize]);
 
   return (
     <div className="space-y-6 pt-4">

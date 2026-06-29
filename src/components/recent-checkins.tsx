@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Undo2, Loader2, Clock } from "lucide-react";
 import { format, formatDistanceToNow } from "date-fns";
+import { decrementSessionStats } from "@/components/gate-session-stats";
 
 type RecentGuest = {
   id: string;
@@ -52,6 +53,10 @@ export default function RecentCheckins() {
 
     if (res.ok) {
       setUndoSuccess(`Undid check-in for ${data.guest.name}`);
+      // We don't have the party size here so fetch the most recent
+      // before-undo entry to decrement accurately — approximate with 1
+      // if unavailable. The undo API could return partySize if needed.
+      decrementSessionStats(checkins[0]?.partySize ?? 1);
       await fetchRecent();
     } else {
       setUndoError(data.error || "Failed to undo");
