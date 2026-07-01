@@ -8,6 +8,7 @@ import ImportButton from "@/components/import-button";
 import GuestTable from "@/components/guest-table";
 import ExportButton from "@/components/export-button";
 import LiveStats from "@/components/live-stats";
+import CheckinChart from "@/components/checkin-chart";
 
 export const dynamic = "force-dynamic";
 
@@ -57,6 +58,9 @@ export default async function AdminPage() {
 
       {/* Live Stats */}
       <LiveStats initial={initialStats} />
+
+      {/* Check-in Timeline */}
+      <CheckinChart />
 
       {/* Guest Table */}
       <div className="space-y-4">
